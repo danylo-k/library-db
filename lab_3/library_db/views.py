@@ -79,39 +79,39 @@ class AuthorDetailedView(APIView):
         return Response({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 # Book
 class BookListView(APIView):
-   def get(self,request):
-       books=uow.books.get_all()
-       serializer=BookSerializer(books, many=True)
-       return Response(serializer.data, status=status.HTTP_200_OK)
-   def post(self,request):
-       serializer=BookSerializer(data=request.data)
-       if serializer.is_valid():
-           book=uow.books.add(**serializer.validated_data)
-           return Response(BookSerializer(book).data, status=status.HTTP_201_CREATED)
-       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self,request):
+        books=uow.books.get_all()
+        serializer=BookSerializer(books, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self,request):
+        serializer=BookSerializer(data=request.data)
+        if serializer.is_valid():
+            book=uow.books.add(**serializer.validated_data)
+            return Response(BookSerializer(book).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class BookDetailedView(APIView):
-   def get(self,request,pk):
-       try:
-           book=uow.books.get_by_id(pk)
-           serializer=BookSerializer(book)
-           return Response(serializer.data, status=status.HTTP_200_OK)
-       except Exception as e:
-           return Response({"error":str(e)}, status=status.HTTP_404_NOT_FOUND)
-   def put(self,request,pk):
-       try:
-           book=uow.books.update(pk, **request.data)
-           if book:
-               serializer=BookSerializer(book)
-               return Response(serializer.data)
-           return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
-       except Exception as e:
-           return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
-   def delete(self,request,pk):
-       book=uow.books.delete(pk)
-       if book:
-           return Response({"message": "Book deleted"})
-       return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get(self,request,pk):
+        try:
+            book=uow.books.get_by_id(pk)
+            serializer=BookSerializer(book)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error":str(e)}, status=status.HTTP_404_NOT_FOUND)
+    def put(self,request,pk):
+        try:
+            book=uow.books.update(pk, **request.data)
+            if book:
+                serializer=BookSerializer(book)
+                return Response(serializer.data)
+            return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,pk):
+        book=uow.books.delete(pk)
+        if book:
+            return Response({"message": "Book deleted"})
+        return Response({"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
 # Genre
 class GenreListView(APIView):
     def get(self, request):
