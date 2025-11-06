@@ -297,3 +297,8 @@ class ReviewDetailedView(APIView):
         if review:
             return Response({"message": "Review deleted"})
         return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
+# report
+class ReportView(APIView):
+    def get(self, request):
+        reports=uow.report.report()
+        return Response(reports, status=status.HTTP_200_OK)

@@ -6,6 +6,7 @@ from library_db.repositories.LoanRepository import LoanRepository
 from library_db.repositories.PublisherRepository import PublisherRepository
 from library_db.repositories.ReaderRepository import ReaderRepository
 from library_db.repositories.ReviewRepository import ReviewRepository
+from library_db.repositories.ReportRepository import ReportRepository
 
 
 class UnitOfWork:
@@ -18,3 +19,4 @@ class UnitOfWork:
         self.publishers=PublisherRepository()
         self.readers=ReaderRepository()
         self.reviews=ReviewRepository()
+        self.report=ReportRepository()

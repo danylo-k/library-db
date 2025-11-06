@@ -1,5 +1,5 @@
 from .views import *
-from django.urls import path,include
+from django.urls import path, include
 
 urlpatterns = [
     path('authors/', AuthorListView.as_view(), name='author-list'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('readers/<int:pk>/', ReaderDetailedView.as_view(), name='reader-detailed'),
     path('reviews/', ReviewListView.as_view(), name='review-list'),
     path('reviews/<int:pk>/', ReviewDetailedView.as_view(), name='review-detailed'),
+    path('report/', ReportView.as_view(), name='report'),
 ]
