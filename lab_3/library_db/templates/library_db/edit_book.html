@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit book</title>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <label>Title:</label>
+        {{ form.title }}
+        <br><label>Author:</label>
+        {{ form.author }}
+        <br><label>Genre:</label>
+        {{ form.genre }}
+        <br><label>Publisher:</label>
+        {{ form.publisher }}
+        <br><label>Date of publishing:</label>
+        {{ form.publish_date }}
+        <br><label>Number of pages:</label>
+        {{ form.page_count }}
+        <br><label>Country:</label>
+        {{ form.country }}
+        <br><label>Total:</label>
+        {{ form.total }}
+        <br><button type="submit">Edit</button>
+    </form>
+    <a href="{% url 'book-detail' book.pk %}">Back to book</a>
+    <br><a href="{% url 'books' %}">Back to list</a>
+</body>
+</html>
