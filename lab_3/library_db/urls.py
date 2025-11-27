@@ -22,4 +22,7 @@ urlpatterns = [
     path('reviews/', ReviewListView.as_view(), name='review-list'),
     path('reviews/<int:pk>/', ReviewDetailedView.as_view(), name='review-detailed'),
     path('report/', ReportView.as_view(), name='report'),
+    path('courses/', course_list, name='course-list'),
+    path('courses/<int:course_id>/', course_detail, name='course-detail'),
+    path('courses/<int:course_id>/delete/', course_delete, name='course-delete'),
 ]

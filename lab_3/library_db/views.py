@@ -1,3 +1,4 @@
+import requests
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
@@ -339,4 +340,25 @@ def delete_book(request, pk):
         book.delete()
         return redirect("books")  # your book list URL name
     return render(request,"library_db/delete_book.html", {"book": book})
+def course_list(request):
+    response=requests.request("GET", 'http://127.0.0.1:8003/api/courses/', headers={'Content-Type': 'application/json'}, auth=('dector', 'itsamemario'))
+    if response.status_code==200:
+        courses=response.json()
+    else:
+        courses=[]
+    return render(request, 'library_db/courses_list.html', {'courses':courses})
+def course_detail(request,course_id):
+    response=requests.request("GET", f'http://127.0.0.1:8003/api/courses/{course_id}',auth=('dector', 'itsamemario'))
+    if response.status_code==200:
+        course=response.json()
+    else:
+        course=None
+    return render(request, 'library_db/course_detail.html', {'course':course})
+def course_delete(request,course_id):
+    response=requests.get(f'http://127.0.0.1:8003/api/courses/{course_id}',auth=('dector', 'itsamemario'))
+    course=response.json()
+    if request.method=="POST":
+        requests.request("DELETE",f'http://127.0.0.1:8003/api/courses/{course_id}/',headers={'Content-Type': 'application/json'},auth=('dector', 'itsamemario'))
+        return redirect("course-list")
+    return render(request,'library_db/delete_course.html', {'course':course})
 
