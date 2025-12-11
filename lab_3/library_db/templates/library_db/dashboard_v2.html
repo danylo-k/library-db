@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard with plotly</title>
+    <title>Dashboard with bokeh</title>
+    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-3.8.1.min.css" type="text/css">
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.8.1.min.js"></script>
     <style>
         .graph-container {
             display:grid;
@@ -30,12 +32,18 @@
     <button type="submit" class="btn btn-primary">update</button>
 </form>
 <div class="graph-container">
-    <div class="graph">{{ graph1 | safe }}</div>
-    <div class="graph">{{ graph2 | safe }}</div>
-    <div class="graph">{{ graph3 | safe }}</div>
-    <div class="graph">{{ graph4 | safe }}</div>
-    <div class="graph">{{ graph5 | safe }}</div>
-    <div class="graph">{{ graph6 | safe }}</div>
+    <div class="graph">{{ div1 | safe }}</div>
+    <div class="graph">{{ div2 | safe }}</div>
+    <div class="graph">{{ div3 | safe }}</div>
+    <div class="graph">{{ div4 | safe }} </div>
+    <div class="graph">{{ div5 | safe }} </div>
+    <div class="graph">{{ div6 | safe }} </div>
+    {{ script1 | safe }}
+    {{ script2 | safe }}
+    {{ script3 | safe }}
+    {{ script4 | safe }}
+    {{ script5 | safe }}
+    {{ script6 | safe }}
 </div>
 </body>
 </html>

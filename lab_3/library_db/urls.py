@@ -31,5 +31,8 @@ urlpatterns = [
     path('loans-by-reader/', loan_count_by_reader, name='loan-count-by-reader'),
     path('loans-per-month/', loans_per_month, name='loans-per-month'),
     path('top-authors/', top_authors_by_books, name='top-authors-by-books'),
-    path('dashboard/v1/', Dashboardv1.as_view(),name='dashboard-v1')
+    path('page-stats/', book_page_stats, name='page-stats'),
+    path('rating-by-page-group/', rating_by_page_group, name='rating-by-page-group'),
+    path('dashboard/v1/', Dashboardv1.as_view(),name='dashboard-v1'),
+    path('dashboard/v2/', Dashboardv2.as_view(),name='dashboard-v2')
 ]
