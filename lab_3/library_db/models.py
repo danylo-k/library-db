@@ -3,6 +3,8 @@ from django.db import models
 class Country(models.Model):
     country_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
     class Meta:
         managed=False
         db_table='country'
@@ -10,6 +12,8 @@ class Country(models.Model):
 class Genre(models.Model):
     genre_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=40, blank=True, null=True)
+    def __str__(self):
+        return self.name
     class Meta:
         managed=False
         db_table='genre'
@@ -22,6 +26,8 @@ class Author(models.Model):
     date_of_birth=models.DateField()
     date_of_death=models.DateField(blank=True, null=True)
     country=models.ForeignKey(Country,models.CASCADE, blank=True, null=True)
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
     class Meta:
         managed=False
         db_table='author'
@@ -32,6 +38,8 @@ class Publisher(models.Model):
     address=models.CharField(max_length=100, blank=True, null=True)
     phone_number=models.CharField(max_length=20, blank=True, null=True)
     email=models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+        return self.name
     class Meta:
         managed=False
         db_table='publisher'
@@ -44,6 +52,8 @@ class Reader(models.Model):
     birth_date=models.DateField(blank=True, null=True)
     phone_number=models.CharField(max_length=20, blank=True, null=True)
     email=models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
     class Meta:
         managed=False
         db_table='reader'
@@ -60,6 +70,8 @@ class Book(models.Model):
     country=models.ForeignKey(Country, models.CASCADE, blank=True, null=True)
     total=models.IntegerField(blank=True, null=True)
     available=models.IntegerField(blank=True, null=True)
+    def __str__(self):
+        return self.title
     class Meta:
         managed=False
         db_table='book'

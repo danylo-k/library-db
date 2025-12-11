@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.course_name }}</title>
+</head>
+<body>
+    <h1>{{ course.course_name }}</h1>
+    <p>{{ course.description }}</p>
+    <p>{{ course.duration }}</p>
+    <p>{{ course.price }}</p>
+    <a href="{% url 'course-list' %}">Back to list</a>
+    <br><a href="{% url 'course-delete' course.course_id %}">Delete this course</a>
+</body>
+</html>

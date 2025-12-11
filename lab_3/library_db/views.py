@@ -1,4 +1,8 @@
-from django.shortcuts import render
+import requests
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, DetailView
+from .forms import BookForm
 from .repositories.unit_of_work import UnitOfWork
 from .serializers import *
 from rest_framework.response import Response
@@ -28,7 +32,7 @@ class CountryDetailedView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error":str(e)}, status=status.HTTP_404_NOT_FOUND)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             country=uow.countries.update(pk, **request.data)
             if country:
@@ -63,7 +67,7 @@ class AuthorDetailedView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error":str(e)}, status=status.HTTP_404_NOT_FOUND)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             author=uow.authors.update(pk, **request.data)
             if author:
@@ -98,7 +102,7 @@ class BookDetailedView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error":str(e)}, status=status.HTTP_404_NOT_FOUND)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             book=uow.books.update(pk, **request.data)
             if book:
@@ -135,7 +139,7 @@ class GenreDetailedView(APIView):
             return Response({"error": "Genre not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             genre=uow.genres.update(pk, **request.data)
             if genre:
@@ -172,7 +176,7 @@ class LoanDetailedView(APIView):
             return Response({"error": "Loan not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             loan=uow.loans.update(pk, **request.data)
             if loan:
@@ -209,7 +213,7 @@ class PublisherDetailedView(APIView):
             return Response({"error": "Publisher not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             publisher=uow.publishers.update(pk, **request.data)
             if publisher:
@@ -246,7 +250,7 @@ class ReaderDetailedView(APIView):
             return Response({"error": "Reader not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             reader=uow.readers.update(pk, **request.data)
             if reader:
@@ -283,7 +287,7 @@ class ReviewDetailedView(APIView):
             return Response({"error": "Review not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self,request,pk):
+    def patch(self,request,pk):
         try:
             review=uow.reviews.update(pk, **request.data)
             if review:
@@ -302,3 +306,59 @@ class ReportView(APIView):
     def get(self, request):
         reports=uow.report.report()
         return Response(reports, status=status.HTTP_200_OK)
+
+class IndexView(ListView):
+    template_name = 'library_db/index.html'
+    context_object_name = 'books_list'
+    def get_queryset(self):
+        return Book.objects.all()
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'library_db/book_detail.html'
+    context_object_name = 'book'
+
+def create_book(request):
+    form=BookForm()
+    if request.method=="POST":
+        form=BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return render(request, "library_db/create_book.html", {"form":form})
+def edit_book(request, pk):
+    book=get_object_or_404(Book, pk=pk)
+    if request.method=="POST":
+        form=BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect("book-detail", pk=pk)
+    else:
+        form=BookForm(instance=book)
+    return render(request, "library_db/edit_book.html", {"form": form, "book": book})
+def delete_book(request, pk):
+    book=get_object_or_404(Book, pk=pk)
+    if request.method=="POST":
+        book.delete()
+        return redirect("books")  # your book list URL name
+    return render(request,"library_db/delete_book.html", {"book": book})
+def course_list(request):
+    response=requests.request("GET", 'http://127.0.0.1:8003/api/courses/', headers={'Content-Type': 'application/json'}, auth=('dector', 'itsamemario'))
+    if response.status_code==200:
+        courses=response.json()
+    else:
+        courses=[]
+    return render(request, 'library_db/courses_list.html', {'courses':courses})
+def course_detail(request,course_id):
+    response=requests.request("GET", f'http://127.0.0.1:8003/api/courses/{course_id}',auth=('dector', 'itsamemario'))
+    if response.status_code==200:
+        course=response.json()
+    else:
+        course=None
+    return render(request, 'library_db/course_detail.html', {'course':course})
+def course_delete(request,course_id):
+    response=requests.get(f'http://127.0.0.1:8003/api/courses/{course_id}',auth=('dector', 'itsamemario'))
+    course=response.json()
+    if request.method=="POST":
+        requests.request("DELETE",f'http://127.0.0.1:8003/api/courses/{course_id}/',headers={'Content-Type': 'application/json'},auth=('dector', 'itsamemario'))
+        return redirect("course-list")
+    return render(request,'library_db/delete_course.html', {'course':course})
+

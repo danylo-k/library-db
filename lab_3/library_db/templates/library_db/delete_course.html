@@ -1,0 +1,11 @@
+<h2>Delete course: {{ course.course_name }}</h2>
+
+<p>Are you sure you want to delete this course?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'course-detail' course.course_id %}">
+        <button type="button">Cancel</button>
+    </a>
+</form>

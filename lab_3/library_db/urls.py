@@ -4,8 +4,11 @@ from django.urls import path, include
 urlpatterns = [
     path('authors/', AuthorListView.as_view(), name='author-list'),
     path('authors/<int:pk>/', AuthorDetailedView.as_view(), name='author-detailed'),
-    path('books/', BookListView.as_view(), name='book-list'),
-    path('books/<int:pk>/', BookDetailedView.as_view(), name='book-detailed'),
+    path('books/', IndexView.as_view(), name='books'),
+    path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),
+    path('books/<int:pk>/edit/', edit_book, name='book-edit'),
+    path('books/create/', create_book, name='book-create'),
+    path('books/<int:pk>/delete/', delete_book, name='book-delete'),
     path('countries/', CountryListView.as_view(), name='country-list'),
     path('countries/<int:pk>/', CountryDetailedView.as_view(), name='country-detailed'),
     path('genres/', GenreListView.as_view(), name='genre-list'),
@@ -19,4 +22,7 @@ urlpatterns = [
     path('reviews/', ReviewListView.as_view(), name='review-list'),
     path('reviews/<int:pk>/', ReviewDetailedView.as_view(), name='review-detailed'),
     path('report/', ReportView.as_view(), name='report'),
+    path('courses/', course_list, name='course-list'),
+    path('courses/<int:course_id>/', course_detail, name='course-detail'),
+    path('courses/<int:course_id>/delete/', course_delete, name='course-delete'),
 ]
