@@ -1,4 +1,3 @@
-import json
 import requests
 
 headers = {
@@ -21,13 +20,13 @@ data = {
     "duration": 4,
     "price": '13.5'
 }
-#response3=requests.request("POST", 'http://127.0.0.1:8003/api/courses/', headers=headers, auth=(username, password), json=data)
-#response3_json=response3.json()
-#print(f'response 3 json: {type(response3_json)} {response3_json}')
+response3=requests.request("POST", 'http://127.0.0.1:8003/api/courses/', headers=headers, auth=(username, password), json=data)
+response3_json=response3.json()
+print(f'response 3 json: {type(response3_json)} {response3_json}')
 data2 = {
     "course_name": "Newer course"
 }
-#response4=requests.request("PATCH", 'http://127.0.0.1:8003/api/courses/5/',  json=data2, auth=(username, password))
-#print(response4.status_code)
+response4=requests.request("PATCH", 'http://127.0.0.1:8003/api/courses/5/',  json=data2, auth=(username, password))
+print(response4.status_code)
 response5=requests.request("DELETE", 'http://127.0.0.1:8003/api/courses/3/', headers=headers, auth=(username, password))
 print(response5.status_code)
