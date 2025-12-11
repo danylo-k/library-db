@@ -1,12 +1,20 @@
+import pandas as pd
 import requests
-from django.http import HttpResponse
+from django.db.models import Count, Avg, Value
+from django.db.models.functions import TruncMonth, Concat
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
 from django.views.generic import ListView, DetailView
+from numpy.linalg.lapack_lite import dgelsd
+
 from .forms import BookForm
 from .repositories.unit_of_work import UnitOfWork
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
+import plotly.io as pio
+import plotly.express as px
 from rest_framework.views import APIView
 # Create your views here.
 
@@ -361,4 +369,103 @@ def course_delete(request,course_id):
         requests.request("DELETE",f'http://127.0.0.1:8003/api/courses/{course_id}/',headers={'Content-Type': 'application/json'},auth=('dector', 'itsamemario'))
         return redirect("course-list")
     return render(request,'library_db/delete_course.html', {'course':course})
+def books_by_genre(request):
+    data=list(
+            Genre.objects.annotate(
+            book_count=Count('book')
+        ).values('name', 'book_count')
+    )
+    return JsonResponse(data, safe=False)
+def avg_author_rating(request):
+    data=list(
+        Author.objects.annotate(
+            full_name=Concat('first_name', Value(' '), 'last_name'),
+            avg_rating=Avg('book__review__rating')
+        )
+        .order_by('avg_rating')
+        .values('full_name', 'avg_rating')
+    )
+    return JsonResponse(data, safe=False)
+def authors_by_country(request):
+    data=list(
+        Country.objects.annotate(author_count=Count('author')).values('name','author_count')
+    )
+    return JsonResponse(data, safe=False)
+def loan_count_by_reader(request):
+    data=list(
+        Reader.objects.annotate(
+            full_name=Concat('first_name', Value(' '), 'last_name')
+        )
+        .annotate(loan_count=Count('loan'))
+        .values('full_name', 'loan_count')
+    )
+    return JsonResponse(data, safe=False)
+def loans_per_month(request):
+    data=list(
+        Loan.objects.annotate(month=TruncMonth('loan_date')).values('month').annotate(count=Count('loan_id'))
+    )
+    return JsonResponse(data, safe=False)
+def top_authors_by_books(request):
+    data = list(
+        Author.objects.annotate(
+            full_name=Concat('first_name', Value(' '), 'last_name'),
+            book_count=Count('book')
+        )
+        .order_by('-book_count')
+        .values('full_name', 'book_count')
+    )
+    return JsonResponse(data, safe=False)
 
+class Dashboardv1(View):
+    def get(self,request):
+        qs_1=requests.get('http://localhost:8000/books-by-genre/')
+        df_1=pd.DataFrame(qs_1.json())
+        if not df_1.empty:
+            fig1=px.bar(df_1, x='name',y='book_count',title='Books counted by genre')
+        else:
+            fig1=px.bar(title='No data')
+        graph1=pio.to_html(fig1, full_html=False)
+        qs_2=requests.get('http://localhost:8000/average-author-rating/')
+        df_2=pd.DataFrame(qs_2.json())
+        if not df_2.empty:
+            fig2=px.scatter(df_2, x='full_name', y='avg_rating', title='Average rating by author')
+        else:
+            fig2=px.scatter(title='No data')
+        graph2=pio.to_html(fig2, full_html=False)
+        qs_3=requests.get('http://localhost:8000/authors-by-country/')
+        df_3 = pd.DataFrame(qs_3.json())
+        if not df_3.empty:
+            fig3 = px.pie(df_3, values='author_count', names='name', title='Author by country')
+        else:
+            fig3 = px.pie(title='No data')
+        graph3 = pio.to_html(fig3, full_html=False)
+        qs_4=requests.get('http://localhost:8000/loans-by-reader/')
+        df_4=pd.DataFrame(qs_4.json())
+        if not df_4.empty:
+            fig4 = px.scatter(df_4, x='full_name', y='loan_count', title='Loans by reader')
+        else:
+            fig4 = px.scatter(title='No data')
+        graph4 = pio.to_html(fig4, full_html=False)
+        qs_5=requests.get('http://localhost:8000/loans-per-month/')
+        df_5=pd.DataFrame(qs_5.json())
+        if not df_5.empty:
+            fig5 = px.scatter(df_5, x='month', y='count', title='Loans by month')
+        else:
+            fig5 = px.scatter(title='No data')
+        graph5 = pio.to_html(fig5, full_html=False)
+        qs_6=requests.get('http://localhost:8000/top-authors/')
+        df_6=pd.DataFrame(qs_6.json())
+        if not df_6.empty:
+            fig6=px.bar(df_6, x='full_name', y='book_count', title='Most books written by author')
+        else:
+            fig6=px.bar(title='No data')
+        graph6 = pio.to_html(fig6, full_html=False)
+        context={
+            'graph1': graph1,
+            'graph2': graph2,
+            'graph3': graph3,
+            'graph4': graph4,
+            'graph5': graph5,
+            'graph6': graph6
+        }
+        return render(request,'library_db/dashboard_v1.html',context)
