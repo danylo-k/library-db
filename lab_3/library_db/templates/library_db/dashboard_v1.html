@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard with plotly</title>
+    <style>
+        .graph-container {
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap:30px;
+            padding:30px;
+        }
+        .graph {
+            border: 2px solid #000;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<form method="get">
+    <label>
+        Minimum books:
+        <input type="number" name="min_books" value="{{ min_books }}" min="1" max="100">
+    </label>
+    <label>
+        Minimum rating:
+        <input type="number" step="0.1" name="min_rating" value="{{ min_rating }}" min="1" max="4.9">
+    </label>
+    <button type="submit" class="btn btn-primary">update</button>
+</form>
+<div class="graph-container">
+    <div class="graph">{{ graph1 | safe }}</div>
+    <div class="graph">{{ graph2 | safe }}</div>
+    <div class="graph">{{ graph3 | safe }}</div>
+    <div class="graph">{{ graph4 | safe }}</div>
+    <div class="graph">{{ graph5 | safe }}</div>
+    <div class="graph">{{ graph6 | safe }}</div>
+</div>
+</body>
+</html>

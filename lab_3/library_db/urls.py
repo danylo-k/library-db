@@ -25,4 +25,14 @@ urlpatterns = [
     path('courses/', course_list, name='course-list'),
     path('courses/<int:course_id>/', course_detail, name='course-detail'),
     path('courses/<int:course_id>/delete/', course_delete, name='course-delete'),
+    path('books-by-genre/', books_by_genre, name='books-by-genre'),
+    path('average-author-rating/', avg_author_rating, name='average-author-rating'),
+    path('authors-by-country/', authors_by_country, name='authors-by-country'),
+    path('loans-by-reader/', loan_count_by_reader, name='loan-count-by-reader'),
+    path('loans-per-month/', loans_per_month, name='loans-per-month'),
+    path('top-authors/', top_authors_by_books, name='top-authors-by-books'),
+    path('page-stats/', book_page_stats, name='page-stats'),
+    path('rating-by-page-group/', rating_by_page_group, name='rating-by-page-group'),
+    path('dashboard/v1/', Dashboardv1.as_view(),name='dashboard-v1'),
+    path('dashboard/v2/', Dashboardv2.as_view(),name='dashboard-v2')
 ]
