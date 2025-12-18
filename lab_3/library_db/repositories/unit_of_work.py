@@ -7,6 +7,7 @@ from library_db.repositories.PublisherRepository import PublisherRepository
 from library_db.repositories.ReaderRepository import ReaderRepository
 from library_db.repositories.ReviewRepository import ReviewRepository
 from library_db.repositories.ReportRepository import ReportRepository
+from library_db.repositories.ThreadRepository import get_res
 
 
 class UnitOfWork:
@@ -20,3 +21,5 @@ class UnitOfWork:
         self.readers=ReaderRepository()
         self.reviews=ReviewRepository()
         self.report=ReportRepository()
+    def get_res(self):
+        return get_res()

@@ -524,13 +524,25 @@ class Dashboardv1(View):
         else:
             fig6=px.bar(title='No data')
         graph6 = pio.to_html(fig6, full_html=False)
+        qs_7=uow.get_res()
+        df_7=pd.DataFrame(list(qs_7))
+        if not df_7.empty:
+            fig7=px.scatter(df_7,x='threads',y='time_sec',title='Time spent based on threads')
+            fig8=px.scatter(df_7,x='threads',y='ram_mb',title='Memory spent based on threads')
+        else:
+            fig7=px.scatter(title='No data')
+            fig8=px.scatter(title='No data')
+        graph7=pio.to_html(fig7, full_html=False)
+        graph8=pio.to_html(fig8, full_html=False)
         context={
             'graph1': graph1,
             'graph2': graph2,
             'graph3': graph3,
             'graph4': graph4,
             'graph5': graph5,
-            'graph6': graph6
+            'graph6': graph6,
+            'graph7': graph7,
+            'graph8': graph8
         }
         return render(request,'library_db/dashboard_v1.html',context)
 class Dashboardv2(View):
@@ -549,7 +561,6 @@ class Dashboardv2(View):
             source1=ColumnDataSource(df_1)
             fig1=figure(x_range=df_1['name'], height=350, title="Books counted by genre")
             fig1.vbar(x='name', top='book_count', width=0.9, source=source1)
-            fig1.xaxis.major_label_orientation=pi/4
         else:
             fig1=figure(title="No data")
         script1,div1=components(fig1)
@@ -571,7 +582,6 @@ class Dashboardv2(View):
             source2=ColumnDataSource(df_2)
             fig2=figure(x_range=df_2['full_name'], height=350, title="Average rating by author")
             fig2.scatter(x='full_name', y='avg_rating', size=10, source=source2)
-            fig2.xaxis.major_label_orientation = pi/4
         else:
             fig2 = figure(title="No data")
         script2, div2 = components(fig2)
